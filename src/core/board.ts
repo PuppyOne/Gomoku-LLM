@@ -46,7 +46,7 @@ export class Board {
     }
 
     toString(): string {
-        let result = '  ' + [...Array(this.size).keys()].map(n => n.toString(16).toUpperCase()).join(' ') + '\n';
+        let result = '  ' + [...Array(this.size).keys()].join(' ') + '\n';
 
         result += this._board.map((row, i) => {
             const rowStr = row.map(cell => {
