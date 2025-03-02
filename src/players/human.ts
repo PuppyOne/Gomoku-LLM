@@ -1,5 +1,4 @@
 import { input } from "@inquirer/prompts";
-import chalk from "chalk";
 import { InvalidCoordinateError, type Board } from "../core/board.js";
 import type { Coordinate } from "../interfaces/coordinate.js";
 import type { Player } from "../interfaces/player.js";

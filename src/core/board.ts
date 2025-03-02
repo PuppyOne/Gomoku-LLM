@@ -5,6 +5,7 @@ export type Piece = 'X' | 'O' | ' ';
 
 export class Board {
     private _board: Piece[][];
+    lastMove: Coordinate | null = null;
 
     constructor(readonly size: number) {
         this._board = Array.from({ length: this.size }, () => Array.from({ length: this.size }, () => ' '));
@@ -24,23 +25,28 @@ export class Board {
 
         const { x, y } = coordiante;
         this._board[y][x] = piece;
+        this.lastMove = coordiante;
     }
 
-    printBoard(): void {
+    printBoard(highlight?: Coordinate): void {
         console.log('\n  ' + [...Array(this.size).keys()].map(n => n.toString(16).toUpperCase()).join(' '));
 
         this._board.forEach((row, i) => {
-            const rowStr = row.map(cell => {
-                if (cell === 'X') return chalk.red('X');
-                if (cell === 'O') return chalk.blue('O');
-                return chalk.gray('·');
+            const rowStr = row.map((cell, j) => {
+                let color = chalk;
+                if (highlight?.x === j && highlight?.y === i)
+                    color = color.bgYellowBright;
+
+                if (cell === 'X') return color.red('X');
+                if (cell === 'O') return color.blue('O');
+                return color.gray('·');
             }).join(' ');
             console.log(`${i.toString(16).toUpperCase()} ${rowStr}`);
         });
     }
 
     toString(): string {
-        let result = '  ' + [...Array(this.size).keys()].map(n => n.toString(16).toUpperCase()).join(' ');
+        let result = '  ' + [...Array(this.size).keys()].map(n => n.toString(16).toUpperCase()).join(' ') + '\n';
 
         result += this._board.map((row, i) => {
             const rowStr = row.map(cell => {
