@@ -60,33 +60,28 @@ export class AIPlayer implements Player {
             // temperature: 0,
             response_format: { type: 'json_object' }
         });
-        console.log(this.messages);
 
         const response = completion.choices[0].message.content;
 
         if (!response || response === '')
             throw new ResponseError('Empty response');
 
+        let reasoning: string;
         let coordinate: Coordinate;
-        try {
-            coordinate = this.parseResponse(response);
-        } catch (error) {
-            if (error instanceof ResponseError) {
-                console.error(error.message);
-            }
-            throw error;
-        }
+        ({ reasoning, coordinate } = this.parseResponse(response));
 
         this.messages.push({
             role: 'assistant',
             content: response
         });
 
+        console.log(`[AI] ${reasoning}`);
+
         board.validateCoordinate(coordinate);
         return coordinate;
     }
 
-    private parseResponse(response: string): Coordinate {
+    private parseResponse(response: string): { reasoning: string; coordinate: Coordinate; } {
         // const cleanedResponse = response.match(/```json\s*([\s\S]*?)\s*```/s)?.[1].trim() ?? response;
 
         // 尝试适配一些不支持强制 JSON Output 的 LLM
@@ -97,7 +92,7 @@ export class AIPlayer implements Player {
 
             if (!this.isCoordinate(coordinate))
                 throw new ResponseError(response);
-            return coordinate;
+            return { reasoning, coordinate };
         } catch (error) {
             throw new ResponseError(response);
         }
