@@ -3,8 +3,7 @@ import type { Coordinate } from "../interfaces/coordinate.js";
 export const prompts = {
     initialPrompt: () => '你是一个五子棋专家，你的棋子是O。你会根据当前棋盘状态，思考最佳落子位置。',
     lastmovePrompt: ({ x, y }: Coordinate) => `对方已在 \`{"x": ${x}, "y": ${y}}\` 落子`,
-    userPrompt: ({ lastMove, boardStr }: { lastMove?: Coordinate, boardStr: string; }) => `
-${lastMove ? prompts.lastmovePrompt(lastMove) + '，' : ''}现在是你的回合，当前棋盘状态（X是你的对手，O是你，·是空位）：
+    userPrompt: ({ lastMove, boardStr }: { lastMove?: Coordinate, boardStr: string; }) => `${lastMove ? prompts.lastmovePrompt(lastMove) + '，' : ''}现在是你的回合，当前棋盘状态（X是你的对手，O是你，·是空位）：
 ${boardStr}
 请严格按如下 JSON 格式返回最佳落子位置：
 
