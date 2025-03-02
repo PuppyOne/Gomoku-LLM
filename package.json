@@ -20,12 +20,13 @@
   },
   "dependencies": {
     "@inquirer/prompts": "^7.3.2",
-    "@types/node": "^22.13.5",
     "axios": "^1.8.1",
     "chalk": "^5.4.1",
-    "openai": "^4.86.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "openai": "^4.86.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/node": "^22.13.8",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  }
 }
