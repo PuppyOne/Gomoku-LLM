@@ -1,10 +1,11 @@
 import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import config from '../config.json' with { type: 'json' };
-import type { Board } from "../core/board.js";
+import { InvalidCoordinateError, type Board } from "../core/board.js";
 import type { Coordinate } from "../interfaces/coordinate.js";
 import type { Player } from "../interfaces/player.js";
 import { confirm } from "@inquirer/prompts";
+import { prompts } from "../prompts/prompts.js";
 
 const client = new OpenAI({
     baseURL: config.model.baseURL,
@@ -17,25 +18,18 @@ export class AIPlayer implements Player {
     private config = config;
     private messages: ChatCompletionMessageParam[] = [{
         role: 'system',
-        content: '你是一个五子棋专家，你的棋子是O。你会根据当前棋盘状态，思考最佳落子位置。'
+        content: prompts.initialPrompt()
     }];
 
     async getMove(board: Board): Promise<Coordinate> {
         const boardStr = board.toString();
         this.messages.push({
             role: 'user',
-            content: `${board.lastMove ? `对方已在 \`{"x": ${board.lastMove.x}, "y": ${board.lastMove.y}}\` 落子，` : ''}现在是你的回合，当前棋盘状态（X是你的对手，O是你，·是空位）：
-${boardStr}
-请严格按如下 JSON 格式返回最佳落子位置：
-
-{
-    "reasoning": "你的思考过程",
-    "coordinate": {"x": 十进制横坐标, "y": 十进制纵坐标}
-}
-
-注意，请将你的思考过程放置在 reasoning 字段中，将落子坐标（第y行 第x列）放置在 coordinate 字段中。
-
-示例：{"reasoning": "...", "coordinate": {"x": 10, "y": 3}}`});
+            content: prompts.userPrompt({
+                lastMove: board.lastMove,
+                boardStr
+            })
+        });
 
         while (true) {
             const tries = this.config.model.maxRetries;
@@ -43,11 +37,12 @@ ${boardStr}
                 try {
                     return await this.getMoveFromAI(board);
                 } catch (error) {
-                    // if (error instanceof ResponseError) {
+                    if (error instanceof InvalidCoordinateError)
+                        this.messages.push({
+                            role: 'user',
+                            content: prompts.invalidMovePrompt({ lastMove: board.lastMove, boardStr }),
+                        });
                     console.error(`AI 移动失败：${(error as Error).message}`);
-                    // } else {
-                    //     throw error;
-                    // }
                 }
             }
             if (!await confirm({
@@ -82,12 +77,12 @@ ${boardStr}
             throw error;
         }
 
-        board.validateCoordinate(coordinate);
-
         this.messages.push({
             role: 'assistant',
             content: response
         });
+
+        board.validateCoordinate(coordinate);
         return coordinate;
     }
 
