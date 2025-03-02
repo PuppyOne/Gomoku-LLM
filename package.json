@@ -1,11 +1,32 @@
 {
+  "name": "gomoku-llm",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/PuppyOne/Gomoku-LLM#readme",
+  "bugs": {
+    "url": "https://github.com/PuppyOne/Gomoku-LLM/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PuppyOne/Gomoku-LLM.git"
+  },
+  "license": "MIT",
+  "author": "PuppyOne",
   "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/index.js",
+    "dev": "node --loader ts-node/esm src/index.ts"
+  },
   "dependencies": {
     "@inquirer/prompts": "^7.3.2",
-    "@types/node": "^22.13.5",
     "axios": "^1.8.1",
     "chalk": "^5.4.1",
+    "openai": "^4.86.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.8",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.2"
   }
 }

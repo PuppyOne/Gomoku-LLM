@@ -1,0 +1,8 @@
+{
+    "model": {
+        "apiKey": "<KEY>",
+        "baseURL": "https://api.moonshot.cn/v1",
+        "id": "kimi-latest",
+        "maxRetries": 3
+    }
+}
